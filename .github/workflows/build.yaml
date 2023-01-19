@@ -7,7 +7,10 @@ on:
       - 'main'
   schedule:
     - cron:  '20 20 20 * *'
-
+    
+env:
+  GITHUB_PAT: ${{ secrets.GH_PAT }}
+  
 jobs:
   docker:
     runs-on: ubuntu-latest
