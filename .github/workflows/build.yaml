@@ -30,4 +30,4 @@ jobs:
       -
         name: Build and push
         run: |
-          make 
+          make run
