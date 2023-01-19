@@ -4,7 +4,7 @@ ide_versioned := "riazarbi/maker_ide:$$(date +"%Y%m%d")"
 ide_latest := riazarbi/maker_ide:latest
 
 maker_run := docker run --rm --mount type=bind,source="$(shell pwd)/",target=/root/ $(maker_versioned)
-ide_run := docker run --rm -p 8888:8888 --mount type=bind,source="$(shell pwd)/",target=/root/ $(ide_versioned) 
+ide_run := docker run --rm -p 8888:8888 --mount type=bind,source="$(shell pwd)/",target=/home/maker/ $(ide_versioned)
 
 .DEFAULT_GOAL := help
 
@@ -38,10 +38,9 @@ docker-push: test ## Push docker container to Docker Hub
 	docker push $(ide_versioned); \
 	docker push $(ide_latest)
 
-.PHONY: debug
-debug: ## Launch an interactive environment
-	$(ide_run) jupyter notebook --NotebookApp.default_url=/lab/ --no-browser --ip=0.0.0.0 --port=8888
-
 run: docker-push  ## Create a file in repo recording date of last push
 	echo $(maker_versioned) > latest
 	
+.PHONY: debug
+debug: ## Launch an interactive environment
+	$(ide_run) jupyter notebook --NotebookApp.default_url=/lab/ --no-browser --ip=0.0.0.0 --port=8888
