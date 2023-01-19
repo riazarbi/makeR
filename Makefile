@@ -25,4 +25,4 @@ docker-push: test ## Push docker container to Docker Hub
 	docker push $(latest_tag) 
 
 run: docker-push  ## Create a file in repo recording date of last push
-	cat $(versioned_tag) >> docker_tags
+	echo $(versioned_tag) >> docker_tags
