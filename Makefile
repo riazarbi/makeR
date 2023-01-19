@@ -1,5 +1,7 @@
-docker_tag := riazarbi/maker:0.0.1
-docker_run := docker run --rm --mount type=bind,source="$(shell pwd)/",target=/root/ $(docker_tag)
+versioned_tag := "riazarbi/maker:$$(date +"%Y%m%d")"
+latest_tag := riazarbi/maker:latest
+
+docker_run := docker run --rm --mount type=bind,source="$(shell pwd)/",target=/root/ $(versioned_tag)
 
 .DEFAULT_GOAL := help
 
@@ -9,8 +11,9 @@ help: ## Show available targets
 
 .PHONY: docker-build
 docker-build: ## Build docker container with required dependencies
-	docker build -t $(docker_tag) .
+	docker build -t $(versioned_tag) .
 	$(docker_run) echo DONE
+	docker build -t $(latest_tag) .
 
 .PHONY: test
 test: docker-build ## Run tests
@@ -18,4 +21,5 @@ test: docker-build ## Run tests
 
 .PHONY: docker-push
 docker-push: test ## Push docker container to Docker Hub
-	docker push $(docker_tag) 
+	docker push $(versioned_tag)
+	docker push $(latest_tag) 
