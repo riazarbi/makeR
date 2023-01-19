@@ -21,6 +21,14 @@ ENV TERM xterm
 # Install common utils
 RUN apt-get install -y --no-install-recommends \
     make 
+    
+# Install python3
+RUN apt-get install -y --no-install-recommends \
+    python3 \
+    python3-pip \
+    # Set python3 to default
+ && update-alternatives --install /usr/bin/python python /usr/bin/python3 1 
+
 
 # Install R
 RUN apt-get install -y --no-install-recommends \
@@ -35,7 +43,7 @@ RUN apt-get install -y --no-install-recommends \
  && apt-get install -y --no-install-recommends r-base 
  
 
-# Install system dependencies for project R packages
+# Install system dependencies
 COPY apt.txt .
 
 RUN echo "Checking for 'apt.txt'..." \
@@ -44,9 +52,10 @@ RUN echo "Checking for 'apt.txt'..." \
         && xargs -a apt.txt apt-get install --yes \
         && apt-get clean > /dev/null \
         && rm -rf /var/lib/apt/lists/* \
+        && rm -rf /tmp/* \
         ; fi
 
-#Install R dependencies
+# Install R dependencies
 COPY install.R .
 RUN if [ -f install.R ]; then R --quiet -f install.R; fi
 
