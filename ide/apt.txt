@@ -1,0 +1,11 @@
+git
+sudo
+libzmq3-dev
+gcc
+build-essential
+pkg-config
+file
+gdebi-core
+psmisc
+libclang-dev
+libpq5
