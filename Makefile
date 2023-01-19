@@ -3,7 +3,7 @@ latest_tag := riazarbi/maker:latest
 
 docker_run := docker run --rm --mount type=bind,source="$(shell pwd)/",target=/root/ $(versioned_tag)
 
-.DEFAULT_GOAL := docker-push
+.DEFAULT_GOAL := help
 
 .PHONY: help
 help: ## Show available targets
@@ -25,4 +25,4 @@ docker-push: test ## Push docker container to Docker Hub
 	docker push $(latest_tag) 
 
 run: docker-push  ## Create a file in repo recording date of last push
-	cat versioned_tag > 
+	cat $(versioned_tag) >> docker_tags
