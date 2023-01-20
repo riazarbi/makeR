@@ -4,7 +4,7 @@ ide_versioned := "riazarbi/maker_ide:$$(date +"%Y%m%d")"
 ide_latest := riazarbi/maker_ide:latest
 
 maker_run := docker run --rm --mount type=bind,source="$(shell pwd)/",target=/root/ $(maker_versioned)
-ide_run := docker run --rm -p 8888:8888 --mount type=bind,source="$(shell pwd)/",target=/home/maker/ $(ide_versioned)
+ide_run := docker run --rm -p 8888:8888 --mount type=bind,source="$(shell pwd)/",target=/root/ $(ide_versioned)
 
 .DEFAULT_GOAL := help
 
