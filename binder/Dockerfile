@@ -1,18 +1,23 @@
 FROM riazarbi/maker:latest
 
-# Install system dependencies for project R packages
-COPY apt.txt .
-
 # Install system dependencies ==================================================
 # BOTH JUPYTER AND RSTUDIO DEPS ================================================
-RUN echo "Checking for 'apt.txt'..." \
-        ; if test -f "apt.txt" ; then \
-        apt-get update --fix-missing > /dev/null\
-        && xargs -a apt.txt apt-get install --yes \
-        && apt-get clean > /dev/null \
-        && rm -rf /var/lib/apt/lists/* \
-        && rm -rf /tmp/* \
-        ; fi
+RUN apt-get update --fix-missing > /dev/null \
+ && apt-get install --yes \
+    git \
+    sudo \
+    libzmq3-dev \
+    gcc \
+    build-essential \
+    pkg-config \
+    file \
+    gdebi-core \
+    psmisc \
+    libclang-dev \
+    libpq5 \
+ && apt-get clean > /dev/null \
+ && rm -rf /var/lib/apt/lists/* \
+ && rm -rf /tmp/* 
 
 
 # Install jupyter ==============================================================
