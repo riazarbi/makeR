@@ -33,7 +33,6 @@ jobs:
       -
         name: Build and push
         run: |
-          sudo usermod -a -G root runner
           make run
       - 
         name: Commit and push 
