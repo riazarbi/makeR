@@ -1,5 +1,7 @@
 FROM riazarbi/maker:latest
 
+USER root
+
 # Install system dependencies ==================================================
 # BOTH JUPYTER AND RSTUDIO DEPS ================================================
 RUN apt-get update --fix-missing > /dev/null \
@@ -37,22 +39,5 @@ RUN wget --quiet https://download2.rstudio.org/server/bionic/amd64/rstudio-serve
  && rm -rf /var/lib/apt/lists/* \
  && rm -rf /tmp/downloaded_packages
 
-# Create $NB_USER
-ARG NB_USER=maker
-ARG NB_UID=1000
-ENV USER ${NB_USER}
-ENV NB_UID ${NB_UID}
-ENV HOME /home/${NB_USER}
-
-RUN adduser --disabled-password \
-    --gecos "Default user" \
-    --uid ${NB_UID} \
-    ${NB_USER}
-    
-# Make sure the contents of our repo are in ${HOME}
-COPY . ${HOME}
-USER root
-RUN chown -R ${NB_UID} ${HOME}
-USER ${NB_USER}
-WORKDIR ${HOME}
-
+# Revert to $NB_USER
+USER $NB_USER

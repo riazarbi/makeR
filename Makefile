@@ -3,8 +3,8 @@ maker_latest := riazarbi/maker:latest
 binder_versioned := "riazarbi/maker_binder:$$(date +"%Y%m%d")"
 binder_latest := riazarbi/maker_binder:latest
 
-maker_run := docker run --rm --mount type=bind,source="$(shell pwd)/",target=/root/ $(maker_versioned)
-binder_run := docker run --rm -p 8888:8888 --mount type=bind,source="$(shell pwd)/",target=/root/ $(binder_versioned)
+maker_run := docker run --rm --mount type=bind,source="$(shell pwd)/",target=/home/maker/ $(maker_versioned)
+binder_run := docker run --rm -p 8888:8888 --mount type=bind,source="$(shell pwd)/",target=/home/maker/ $(binder_versioned)
 
 .DEFAULT_GOAL := help
 
