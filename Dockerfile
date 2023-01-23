@@ -1,6 +1,5 @@
 # Lock to a particular Ubuntu image
-# No jammy because it ships with libssl3 and rstudio requires libssl1
-FROM ubuntu:focal
+FROM ubuntu:jammy
 
 LABEL authors="Riaz Arbi"
 ARG R_VERSION=4.2.2

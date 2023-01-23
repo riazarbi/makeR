@@ -33,15 +33,24 @@ COPY install.R .
 RUN if [ -f install.R ]; then R --quiet -f install.R; fi
 
 # Install RSTUDIO
-RUN wget --quiet https://download2.rstudio.org/server/bionic/amd64/rstudio-server-1.4.1106-amd64.deb \
- && gdebi -n rstudio-server-1.4.1106-amd64.deb \
+RUN wget --quiet https://download2.rstudio.org/server/jammy/amd64/rstudio-server-2022.12.0-353-amd64.deb  \
+ && gdebi -n rstudio-server-2022.12.0-353-amd64.deb \
 # Clean up
  && rm -rf /var/lib/apt/lists/* \
  && rm -rf /tmp/downloaded_packages
 
+# Ensure correct place for saving R packages
+ENV R_LIBS_SITE=/usr/local/lib/R/site-library
+ENV R_LIBS_USER=/usr/local/lib/R/site-library
+
+
 # Back to non privileged user
 # Make sure the contents of our repo are in ${HOME}
 # These env vars are in FROM image
+ENV NB_USER=maker
+ENV NB_UID=1000
+ENV USER ${NB_USER}
+ENV HOME /home/${NB_USER}
 COPY . ${HOME}
 RUN chown -R ${NB_UID} ${HOME}
 USER ${NB_USER}
