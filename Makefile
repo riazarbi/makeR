@@ -14,7 +14,7 @@ help: ## Show available targets
 
 .PHONY: maker-build
 maker-build: ## Build docker container with required dependencies
-	docker build -t $(maker_versioned) .
+	docker build --no-cache -t $(maker_versioned) .
 	docker image tag $(maker_versioned) $(maker_latest)
 
 .PHONY: binder-build
