@@ -1,5 +1,7 @@
 # Lock to a particular Ubuntu image
+# No jammy because it ships with libssl3 and rstudio requires libssl1
 FROM ubuntu:focal
+
 LABEL authors="Riaz Arbi"
 ARG R_VERSION=4.2.2
 ARG DEBIAN_FRONTEND=noninteractive
@@ -37,6 +39,7 @@ RUN apt-get install -y --no-install-recommends \
     curl \
     wget \
     gpg \
+    gcc \
  && wget -qO- https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc | tee -a /etc/apt/trusted.gpg.d/cran_ubuntu_key.asc \
  && add-apt-repository "deb https://cloud.r-project.org/bin/linux/ubuntu $(lsb_release -cs)-cran40/" \
  && apt-get update \

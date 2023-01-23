@@ -4,9 +4,11 @@ FROM riazarbi/maker:latest
 # BOTH JUPYTER AND RSTUDIO DEPS ================================================
 RUN apt-get update --fix-missing > /dev/null \
  && apt-get install --yes \
+    # for jupyter
     git \
     sudo \
     libzmq3-dev \
+    # for Rstudio
     gcc \
     build-essential \
     pkg-config \
@@ -15,13 +17,13 @@ RUN apt-get update --fix-missing > /dev/null \
     psmisc \
     libclang-dev \
     libpq5 \
+    openssl \
  && apt-get clean > /dev/null \
  && rm -rf /var/lib/apt/lists/* \
  && rm -rf /tmp/* 
 
 
 # Install jupyter ==============================================================
-RUN apt-get purge -y python3-requests
 RUN python3 -m pip install "charset-normalizer<3.0,>=2.0" \
  && python3 -m pip install pip install jsonschema[format-nongpl] 
 RUN python3 -m pip install --no-cache-dir "notebook==6.5.1" "jupyterlab==3.4.8" \
@@ -32,18 +34,10 @@ RUN if [ -f install.R ]; then R --quiet -f install.R; fi
 
 # Install RSTUDIO
 RUN wget --quiet https://download2.rstudio.org/server/bionic/amd64/rstudio-server-1.4.1106-amd64.deb \
- && gdebi -n rstudio-server-1.4.1106-amd64.deb
-
-#RUN ln -fs /usr/lib/rstudio-server/bin/rstudio-server /usr/local/bin
-#RUN ln -fs /usr/lib/rstudio-server/bin/rserver /usr/local/bin
-
-#ENV PATH="${PATH}:/usr/lib/rstudio-server/bin" 
-
+ && gdebi -n rstudio-server-1.4.1106-amd64.deb \
 # Clean up
-RUN rm -rf /var/lib/apt/lists/*
-RUN rm -rf /tmp/downloaded_packages
-
-#RUN jupyter kernelspec list
+ && rm -rf /var/lib/apt/lists/* \
+ && rm -rf /tmp/downloaded_packages
 
 # Create $NB_USER
 ARG NB_USER=maker

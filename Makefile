@@ -30,7 +30,6 @@ test: binder-build ## Run tests
 	$(binder_run) rstudio-server version
 	$(binder_run) jupyter kernelspec list
 
-
 .PHONY: docker-push
 docker-push: test ## Push docker container to Docker Hub
 	docker push $(maker_versioned); \
