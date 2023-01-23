@@ -17,7 +17,7 @@ RUN apt-get update --fix-missing > /dev/null \
     psmisc \
     libclang-dev \
     libpq5 \
-    openssl \
+    libssl-dev \
  && apt-get clean > /dev/null \
  && rm -rf /var/lib/apt/lists/* \
  && rm -rf /tmp/* 
