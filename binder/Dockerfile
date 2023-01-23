@@ -9,8 +9,6 @@ RUN apt-get update --fix-missing > /dev/null \
     sudo \
     libzmq3-dev \
     # for Rstudio
-    gcc \
-    build-essential \
     pkg-config \
     file \
     gdebi-core \
