@@ -39,5 +39,10 @@ RUN wget --quiet https://download2.rstudio.org/server/bionic/amd64/rstudio-serve
  && rm -rf /var/lib/apt/lists/* \
  && rm -rf /tmp/downloaded_packages
 
-# Revert to $NB_USER
-USER $NB_USER
+# Back to non privileged user
+# Make sure the contents of our repo are in ${HOME}
+# These env vars are in FROM image
+COPY . ${HOME}
+RUN chown -R ${NB_UID} ${HOME}
+USER ${NB_USER}
+WORKDIR ${HOME}

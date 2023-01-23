@@ -5,7 +5,7 @@ R docker images for CI/CD style workflows
 
 This repo builds the base docker image for my CI/CD style R workflows. The file structure follows [binder](https://mybinder.org/) conventions, so that downstream Dockerfiles can add Jupyterlab or RStudio interactivity if they wish.
 
-In order to build the base image, clone this repo, `cd` into the repo and then run `make docker-build`.
+In order to build the base image, clone this repo, `cd` into the repo and then run `make maker-build`.
 
 If you want to use this for your own purposes, you should change the docker repo at the top of the Makefile to your own repo. Then you can run `make run` to build, test and push the image.
 
