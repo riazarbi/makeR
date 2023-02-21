@@ -21,7 +21,8 @@ ENV TERM xterm
 
 # Install common utils
 RUN apt-get install -y --no-install-recommends \
-    make 
+    make \
+    git
     
 # Install python3
 RUN apt-get install -y --no-install-recommends \
