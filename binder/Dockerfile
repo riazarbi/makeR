@@ -43,6 +43,10 @@ RUN wget --quiet https://download2.rstudio.org/server/jammy/amd64/rstudio-server
 ENV R_LIBS_SITE=/usr/local/lib/R/site-library
 ENV R_LIBS_USER=/usr/local/lib/R/site-library
 
+# Install VSCode
+RUN curl -fsSL https://code-server.dev/install.sh | sh \
+ && pip3 install jupyter-vscode-proxy
+
 # Back to non privileged user
 # Make sure the contents of our repo are in ${HOME}
 # These env vars are in FROM image
