@@ -10,7 +10,7 @@ binder_run := docker run --rm -p 8888:8888 --mount type=bind,source="$(shell pwd
 
 .PHONY: help
 help: ## Show available targets
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) |  awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 .PHONY: maker-build
 maker-build: ## Build docker container with required dependencies
@@ -30,16 +30,16 @@ test: binder-build ## Run tests
 	$(binder_run) rstudio-server version
 	$(binder_run) jupyter kernelspec list
 
-.PHONY: docker-push
-docker-push: test ## Push docker container to Docker Hub
+.PHONY: push
+push: test ## Push docker container to Docker Hub
 	docker push $(maker_versioned); \
 	docker push $(maker_latest); \
 	docker push $(binder_versioned); \
 	docker push $(binder_latest)
 
-run: docker-push  ## Create a file in repo recording date of last push
+run: push  ## Build all images and push to docker hub
 	echo $(maker_versioned) > latest
-	
+
 .PHONY: debug
 debug: ## Launch an interactive environment
 	$(binder_run) jupyter notebook --NotebookApp.default_url=/lab/ --no-browser --ip=0.0.0.0 --port=8888
