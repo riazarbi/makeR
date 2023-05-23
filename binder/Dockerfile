@@ -37,7 +37,8 @@ RUN wget --quiet https://download2.rstudio.org/server/jammy/amd64/rstudio-server
  && gdebi -n rstudio-server-2022.12.0-353-amd64.deb \
 # Clean up
  && rm -rf /var/lib/apt/lists/* \
- && rm -rf /tmp/downloaded_packages
+ && rm -rf /tmp/downloaded_packages \
+ && rm -rf rstudio-server-2022.12.0-353-amd64.deb
 
 # Ensure correct place for saving R packages
 ENV R_LIBS_SITE=/usr/local/lib/R/site-library
@@ -45,7 +46,7 @@ ENV R_LIBS_USER=/usr/local/lib/R/site-library
 
 # Install VSCode
 RUN curl -fsSL https://code-server.dev/install.sh | sh \
- && pip3 install jupyter-vscode-proxy
+ && pip3 install jupyter-vscode-proxy 
 
 # Back to non privileged user
 # Make sure the contents of our repo are in ${HOME}
@@ -58,3 +59,8 @@ COPY . ${HOME}
 RUN chown -R ${NB_UID} ${HOME}
 USER ${NB_USER}
 WORKDIR ${HOME}
+
+# Install VSCode extensions
+RUN code-server --install-extension ms-python.python \
+ && code-server --install-extension innoverio.vscode-dbt-power-user \
+ && code-server --install-extension REditorSupport.r
