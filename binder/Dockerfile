@@ -24,21 +24,21 @@ RUN apt-get update --fix-missing > /dev/null \
 
 
 # Install jupyter ==============================================================
-RUN python3 -m pip install "charset-normalizer<3.0,>=2.0" \
- && python3 -m pip install pip install jsonschema[format-nongpl] 
-RUN python3 -m pip install --no-cache-dir "notebook==6.5.1" "jupyterlab==3.4.8" \
+RUN python3 -m pip install "charset-normalizer" \
+ && python3 -m pip install jsonschema[format-nongpl] 
+RUN python3 -m pip install --no-cache-dir "notebook" "jupyterlab" \
  && python3 -m pip install --no-cache-dir jupyter-rsession-proxy jupyterhub
 # Install jupyter R dependencies
 COPY install.R .
 RUN if [ -f install.R ]; then R --quiet -f install.R; fi
 
 # Install RSTUDIO
-RUN wget --quiet https://download2.rstudio.org/server/jammy/amd64/rstudio-server-2022.12.0-353-amd64.deb  \
- && gdebi -n rstudio-server-2022.12.0-353-amd64.deb \
+RUN wget --quiet https://download2.rstudio.org/server/jammy/amd64/rstudio-server-2024.04.2-764-amd64.deb  \
+ && gdebi -n rstudio-server-2024.04.2-764-amd64.deb \
 # Clean up
  && rm -rf /var/lib/apt/lists/* \
  && rm -rf /tmp/downloaded_packages \
- && rm -rf rstudio-server-2022.12.0-353-amd64.deb
+ && rm -rf rstudio-server-2024.04.2-764-amd64.deb
 
 # Ensure correct place for saving R packages
 ENV R_LIBS_SITE=/usr/local/lib/R/site-library

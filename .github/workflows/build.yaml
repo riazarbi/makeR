@@ -33,7 +33,7 @@ jobs:
       -
         name: Build and push
         run: |
-          make run
+          make build
       - 
         name: Commit and push 
         run: |-

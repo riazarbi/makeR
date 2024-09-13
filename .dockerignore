@@ -1,0 +1,8 @@
+.local/*
+.config/*
+.jupyter/*
+.Rproj.user/*
+.vscode-R/*
+.vscode-server/*
+data/*
+.cache/*

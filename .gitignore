@@ -38,8 +38,12 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 
-.local/
+.bash_history
 
-.jupyter/
-
-.config/
+.local/*
+.config/*
+.jupyter/*
+.Rproj.user/*
+.vscode-R/*
+.vscode-server/*
+.cache/*
