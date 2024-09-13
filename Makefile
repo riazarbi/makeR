@@ -3,8 +3,8 @@ maker_latest := riazarbi/maker:latest
 binder_versioned := "riazarbi/maker_binder:$$(date +"%Y%m%d")"
 binder_latest := riazarbi/maker_binder:latest
 
-maker_run := docker run -it --rm --mount type=bind,source="$(shell pwd)/",target=/home/maker/ $(maker_versioned)
-binder_run := docker run -it --rm --name debug --rm -p 8888:8888 --user=root --mount type=bind,source="$(shell pwd)/",target=/home/maker/ $(binder_versioned)
+maker_run := docker run --rm --mount type=bind,source="$(shell pwd)/",target=/home/maker/ $(maker_versioned)
+binder_run := docker run --rm --name debug --rm -p 8888:8888 --user=root --mount type=bind,source="$(shell pwd)/",target=/home/maker/ $(binder_versioned)
 
 .DEFAULT_GOAL := help
 
@@ -43,7 +43,3 @@ build: push  ## Build all images and push to docker hub
 .PHONY: debug
 debug: ## Launch an interactive cli environment
 	$(maker_run) 
-
-.PHONY: dev
-dev: ## Launch an interactive jupyter environment
-	$(binder_run) 
