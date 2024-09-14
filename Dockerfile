@@ -47,7 +47,7 @@ RUN apt-get install -y --no-install-recommends \
  && apt-get install -y --no-install-recommends r-base 
  
 
-# Install system dependencies
+# Install R system dependencies
 COPY apt.txt .
 
 RUN echo "Checking for 'apt.txt'..." \
@@ -60,6 +60,7 @@ RUN echo "Checking for 'apt.txt'..." \
         ; fi
 
 # Install R dependencies
+# Makes use of pak to install system dependencies as well
 COPY install.R .
 RUN if [ -f install.R ]; then R --quiet -f install.R; fi
 
