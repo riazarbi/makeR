@@ -3,8 +3,10 @@ maker_latest := riazarbi/maker:latest
 binder_versioned := "riazarbi/maker_binder:$$(date +"%Y%m%d")"
 binder_latest := riazarbi/maker_binder:latest
 
-maker_run := docker run --rm --mount type=bind,source="$(shell pwd)/",target=/home/maker/ $(maker_versioned)
-binder_run := docker run --rm --name debug --rm -p 8888:8888 --user=root --mount type=bind,source="$(shell pwd)/",target=/home/maker/ $(binder_versioned)
+maker_run := docker run -it --rm --mount type=bind,source="$(shell pwd)/",target=/home/maker/ $(maker_latest)
+binder_run := docker run --rm -p 8888:8888 --user=root --mount type=bind,source="$(shell pwd)/",target=/home/maker/ $(binder_versioned)
+binder_dev := docker run -it --rm --name debug --rm -p 8888:8888 --mount type=bind,source="$(shell pwd)/",target=/home/maker/ $(binder_versioned)
+
 
 .DEFAULT_GOAL := help
 
@@ -14,13 +16,13 @@ help: ## Show available targets
 
 .PHONY: maker-build
 maker-build: ## Build docker container with required dependencies
-	docker build -t $(maker_versioned) .
+	docker build --no-cache  -t $(maker_versioned) .
 	docker image tag $(maker_versioned) $(maker_latest)
 
 .PHONY: binder-build
-binder-build: maker-build ## Build docker container with required dependencies
+binder-build:  ## Build docker container with required dependencies
 	cd binder; \
-	docker build -t $(binder_versioned) . ; \
+	docker build --no-cache -t $(binder_versioned) . ; \
 	docker image tag $(binder_versioned) $(binder_latest)
 
 .PHONY: test
@@ -42,4 +44,8 @@ build: push  ## Build all images and push to docker hub
 
 .PHONY: debug
 debug: ## Launch an interactive cli environment
-	$(maker_run) 
+	$(maker_run) /bin/bash
+
+.PHONY: dev
+dev: ## Launch an interactive browser based IDE
+	$(binder_dev) jupyter lab  --NotebookApp.default_url="/rstudio" --no-browser --NotebookApp.token=a2ff4e8772f46374f3c6ef9d4893dacf5e933f274cf151e0 --port=8888 --ip=0.0.0.0
