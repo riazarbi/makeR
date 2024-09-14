@@ -1,24 +1,12 @@
-install.packages("remotes")
-# fix compile issue for stringr on jammy
-install.packages("stringi")
-# use posit binary linux packages
-Sys.setenv("ARROW_R_DEV"=TRUE)
-Sys.setenv("NOT_CRAN"="true")
+# Base packages
+install.packages(c("remotes", "pak"))
 
-options(HTTPUserAgent = sprintf("R/%s R (%s)", getRversion(), paste(getRversion(), R.version["platform"], R.version["arch"], R.version["os"])))
-options(repos="https://packagemanager.rstudio.com/all/__linux__/focal/latest")
-source("https://docs.posit.co/rspm/admin/check-user-agent.R")
-# install rmarkdown
-install.packages("rmarkdown")
+# Base packages
+pak::pak_install_extra()
 
-packages <- c("tidyverse",
-              "data.table",
-              "arrow",
-              "duckdb",
-              "languageserver",
-              "plotly",
-              "snakecase",
-              "renv")
+pak::pkg_install("rspm")
 
-install.packages(packages)
+rspm::enable()
+packages <- c("rmarkdown", "renv", "dplyr", "arrow", "duckdb", "imager")
 
+pak::pkg_install(packages)
