@@ -2,7 +2,6 @@
 FROM ubuntu:jammy
 
 LABEL authors="Riaz Arbi"
-ARG R_VERSION=4.2.2
 ARG DEBIAN_FRONTEND=noninteractive
 
 
