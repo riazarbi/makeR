@@ -43,25 +43,33 @@ RUN apt-get install -y --no-install-recommends \
  && wget -qO- https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc | tee -a /etc/apt/trusted.gpg.d/cran_ubuntu_key.asc \
  && add-apt-repository "deb https://cloud.r-project.org/bin/linux/ubuntu $(lsb_release -cs)-cran40/" \
  && apt-get update \
- && apt-get install -y --no-install-recommends r-base 
- 
+ && apt-get install -y --no-install-recommends r-base \
+ # Install system dependencies for common R packages
+ # First install known minimal system dependencies
+  && echo "Checking for 'apt.txt'..." \
+         ; if test -f "apt.txt" ; then \
+         apt-get update --fix-missing > /dev/null\
+         && xargs -a apt.txt apt-get install --yes \
+         && apt-get clean > /dev/null \
+         && rm -rf /var/lib/apt/lists/* \
+         && rm -rf /tmp/* \
+         ; fi \
+ # Makes use of pak to install system dependencies of CRAN top 100 packages as well
+ # Use install.R to determine what apt packages are needed...
+     && if [ -f install.R ]; then R --quiet -f install.R; fi \
+ # ...install.R will create a bash install file called R_apt_deps.txt...
+ # ...and then use apt to install those packages
+  && echo "Checking for 'R_apt_deps.'..." \
+         ; if test -f "R_apt_deps.sh" ; then \
+         /bin/bash R_apt_deps.sh \
+         && apt-get clean > /dev/null \
+         && rm -rf /var/lib/apt/lists/* \
+         && rm -rf /tmp/* \
+         ; fi
 
-# Install R system dependencies
-COPY apt.txt .
 
-RUN echo "Checking for 'apt.txt'..." \
-        ; if test -f "apt.txt" ; then \
-        apt-get update --fix-missing > /dev/null\
-        && xargs -a apt.txt apt-get install --yes \
-        && apt-get clean > /dev/null \
-        && rm -rf /var/lib/apt/lists/* \
-        && rm -rf /tmp/* \
-        ; fi
-
-# Install R dependencies
-# Makes use of pak to install system dependencies as well
-COPY install.R .
-RUN if [ -f install.R ]; then R --quiet -f install.R; fi
+# Enable prompt color in the skeleton .bashrc before creating the default NB_USER
+RUN sed -i 's/^#force_color_prompt=yes/force_color_prompt=yes/' /etc/skel/.bashrc
 
 # Create $NB_USER
 ENV NB_USER=maker
@@ -76,7 +84,6 @@ RUN adduser --disabled-password \
     ${NB_USER}
     
 # Make sure the contents of our repo are in ${HOME}
-COPY . ${HOME}
 USER root
 RUN chown -R ${NB_UID} ${HOME}
 USER ${NB_USER}

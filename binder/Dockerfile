@@ -2,6 +2,8 @@ FROM riazarbi/maker:latest
 
 USER root
 
+COPY install.R .
+
 # Install system dependencies ==================================================
 # BOTH JUPYTER AND RSTUDIO DEPS ================================================
 RUN apt-get update --fix-missing > /dev/null \
@@ -20,32 +22,23 @@ RUN apt-get update --fix-missing > /dev/null \
     libssl-dev \
  && apt-get clean > /dev/null \
  && rm -rf /var/lib/apt/lists/* \
- && rm -rf /tmp/* 
-
-
+ && rm -rf /tmp/* \
 # Install jupyter ==============================================================
-RUN python3 -m pip install "charset-normalizer" \
- && python3 -m pip install jsonschema[format-nongpl] 
-RUN python3 -m pip install --no-cache-dir "notebook" "jupyterlab" \
- && python3 -m pip install --no-cache-dir jupyter-rsession-proxy jupyterhub
+ && python3 -m pip install "charset-normalizer" \
+ && python3 -m pip install jsonschema[format-nongpl] \
+ && python3 -m pip install --no-cache-dir "notebook" "jupyterlab" \
+ && python3 -m pip install --no-cache-dir jupyter-rsession-proxy jupyterhub \
 # Install jupyter R dependencies
-COPY install.R .
-RUN if [ -f install.R ]; then R --quiet -f install.R; fi
-
+ && if [ -f install.R ]; then R --quiet -f install.R; fi \
 # Install RSTUDIO
-RUN wget --quiet https://download2.rstudio.org/server/jammy/amd64/rstudio-server-2024.04.2-764-amd64.deb  \
+ && wget --quiet https://download2.rstudio.org/server/jammy/amd64/rstudio-server-2024.04.2-764-amd64.deb  \
  && gdebi -n rstudio-server-2024.04.2-764-amd64.deb \
 # Clean up
  && rm -rf /var/lib/apt/lists/* \
  && rm -rf /tmp/downloaded_packages \
- && rm -rf rstudio-server-2024.04.2-764-amd64.deb
-
-# Ensure correct place for saving R packages
-ENV R_LIBS_SITE=/usr/local/lib/R/site-library
-ENV R_LIBS_USER=/usr/local/lib/R/site-library
-
+ && rm -rf rstudio-server-2024.04.2-764-amd64.deb \
 # Install VSCode
-RUN curl -fsSL https://code-server.dev/install.sh | sh \
+ && curl -fsSL https://code-server.dev/install.sh | sh \
  && pip3 install jupyter-vscode-proxy 
 
 # Back to non privileged user
@@ -55,12 +48,6 @@ ENV NB_USER=maker
 ENV NB_UID=1000
 ENV USER ${NB_USER}
 ENV HOME /home/${NB_USER}
-COPY . ${HOME}
 RUN chown -R ${NB_UID} ${HOME}
 USER ${NB_USER}
 WORKDIR ${HOME}
-
-# Install VSCode extensions
-RUN code-server --install-extension ms-python.python \
- && code-server --install-extension innoverio.vscode-dbt-power-user \
- && code-server --install-extension REditorSupport.r
