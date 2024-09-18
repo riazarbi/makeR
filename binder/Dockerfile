@@ -2,15 +2,12 @@ FROM riazarbi/maker:latest
 
 USER root
 
-COPY install.R .
-
 # Install system dependencies ==================================================
 # BOTH JUPYTER AND RSTUDIO DEPS ================================================
 RUN apt-get update --fix-missing > /dev/null \
  && apt-get install --yes \
     # for jupyter
     git \
-    sudo \
     libzmq3-dev \
     # for Rstudio
     pkg-config \
@@ -29,7 +26,8 @@ RUN apt-get update --fix-missing > /dev/null \
  && python3 -m pip install --no-cache-dir "notebook" "jupyterlab" \
  && python3 -m pip install --no-cache-dir jupyter-rsession-proxy jupyterhub \
 # Install jupyter R dependencies
- && if [ -f install.R ]; then R --quiet -f install.R; fi \
+ && Rscript -e 'remotes::install_github("IRkernel/IRkernel@*release")' \
+ && Rscript -e 'IRkernel::installspec(user = FALSE)' \
 # Install RSTUDIO
  && wget --quiet https://download2.rstudio.org/server/jammy/amd64/rstudio-server-2024.04.2-764-amd64.deb  \
  && gdebi -n rstudio-server-2024.04.2-764-amd64.deb \
@@ -49,5 +47,6 @@ ENV NB_UID=1000
 ENV USER ${NB_USER}
 ENV HOME /home/${NB_USER}
 RUN chown -R ${NB_UID} ${HOME}
+
 USER ${NB_USER}
 WORKDIR ${HOME}
