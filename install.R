@@ -10,17 +10,14 @@ rspm::enable()
 
 required_packages <- c(
     "sf", 
-    "imager", 
     "tidymodels", 
     "tidyverse", 
     "arrow", 
     "duckdb",
-    "plotly",
     "quarto",
     "rmarkdown",
     "aws.s3",
-    "reticulate",
-    "raster")
+    "reticulate")
 
 top_packages <- cranlogs::cran_top_downloads(when = "last-month", count = 100)
 
