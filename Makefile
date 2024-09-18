@@ -17,13 +17,13 @@ help: ## Show available targets
 
 .PHONY: maker-build
 maker-build: ## Build docker container with required dependencies
-	docker build --no-cache -t $(maker_versioned) .
+	docker build  -t $(maker_versioned) .
 	docker image tag $(maker_versioned) $(maker_latest)
 
 .PHONY: binder-build
 binder-build:  maker-build ## Build docker container with required dependencies
 	cd binder; \
-	docker build --no-cache -t $(binder_versioned) . ; \
+	docker build  -t $(binder_versioned) . ; \
 	docker image tag $(binder_versioned) $(binder_latest)
 
 .PHONY: test
@@ -40,6 +40,7 @@ push: test ## Push docker container to Docker Hub
 	docker push $(binder_versioned); \
 	docker push $(binder_latest)
 
+.PHONY: build
 build: push  ## Build all images and push to docker hub
 	echo $(maker_versioned) > latest
 
