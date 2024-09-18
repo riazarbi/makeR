@@ -4,6 +4,8 @@ FROM ubuntu:jammy
 LABEL authors="Riaz Arbi"
 ARG DEBIAN_FRONTEND=noninteractive
 
+COPY install.R .
+COPY apt.txt .
 
 # BASE ==========================================
 # Set locales and install make
@@ -21,18 +23,15 @@ ENV TERM xterm
 # Install common utils
 RUN apt-get install -y --no-install-recommends \
     make \
-    git
-    
+    git \
 # Install python3
-RUN apt-get install -y --no-install-recommends \
+ && apt-get install -y --no-install-recommends \
     python3 \
     python3-pip \
     # Set python3 to default
- && update-alternatives --install /usr/bin/python python /usr/bin/python3 1 
-
-
+ && update-alternatives --install /usr/bin/python python /usr/bin/python3 1 \
 # Install R
-RUN apt-get install -y --no-install-recommends \
+ && apt-get install -y --no-install-recommends \
     software-properties-common \
     dirmngr \
     curl \
@@ -40,10 +39,11 @@ RUN apt-get install -y --no-install-recommends \
     gpg \
     gcc \
     build-essential \
+    sudo \
  && wget -qO- https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc | tee -a /etc/apt/trusted.gpg.d/cran_ubuntu_key.asc \
  && add-apt-repository "deb https://cloud.r-project.org/bin/linux/ubuntu $(lsb_release -cs)-cran40/" \
  && apt-get update \
- && apt-get install -y --no-install-recommends r-base \
+ && apt-get install -y --no-install-recommends r-base r-base-dev \
  # Install system dependencies for common R packages
  # First install known minimal system dependencies
   && echo "Checking for 'apt.txt'..." \
@@ -61,7 +61,8 @@ RUN apt-get install -y --no-install-recommends \
  # ...and then use apt to install those packages
   && echo "Checking for 'R_apt_deps.'..." \
          ; if test -f "R_apt_deps.sh" ; then \
-         /bin/bash R_apt_deps.sh \
+         cat R_apt_deps.sh \
+         && /bin/bash R_apt_deps.sh \
          && apt-get clean > /dev/null \
          && rm -rf /var/lib/apt/lists/* \
          && rm -rf /tmp/* \
@@ -81,10 +82,13 @@ ENV HOME /home/${NB_USER}
 RUN adduser --disabled-password \
     --gecos "Default user" \
     --uid ${NB_UID} \
-    ${NB_USER}
-    
-# Make sure the contents of our repo are in ${HOME}
+    ${NB_USER} \
+# Make them sudo
+ && adduser "$NB_USER" sudo && echo '%sudo ALL=(ALL) NOPASSWD:ALL' >>/etc/sudoers
+
+
 USER root
 RUN chown -R ${NB_UID} ${HOME}
+
 USER ${NB_USER}
 WORKDIR ${HOME}
